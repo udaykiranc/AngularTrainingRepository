@@ -16,10 +16,11 @@ import {ContactDetailsComponent} from "./contact-details.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { LoggerService } from "./logger.service";
 import { ContactsLoggerService } from "./contactsLogger.service";
+import { myUpper } from "./my-upper.pipe";
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, ReactiveFormsModule ],
-  declarations: [ AppComponent, ContactsListComponent, ContactDetailsComponent ],
+  declarations: [ AppComponent, ContactsListComponent, ContactDetailsComponent, myUpper ],
   bootstrap:    [ AppComponent ],
   providers: [ContactsService, [{provide:LoggerService,useClass:ContactsLoggerService}]]
 })

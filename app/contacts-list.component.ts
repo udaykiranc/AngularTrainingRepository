@@ -9,7 +9,7 @@ import {Contact} from "./contact.interface";
     template: `
         <ul>
               <li *ngFor="let contact of people" class="item" [class.active]="selectedContact==contact" >
-                       <a (click)="onSelect(contact)">{{contact.firstName}} {{contact.lastName | uppercase}}</a>
+                       <a (click)="onSelect(contact)">{{contact.firstName}} {{contact.lastName | myUpper}}</a>
               
             </li>
         </ul>
