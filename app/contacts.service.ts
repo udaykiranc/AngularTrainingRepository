@@ -1,6 +1,7 @@
 
 import {Injectable} from "@angular/core";
 import {Contact} from "./contact.interface";
+import { LoggerService } from "./logger.service";
 @Injectable()
 
 export class ContactsService {
@@ -21,8 +22,9 @@ export class ContactsService {
         return this._CONTACTS;
     }
 
-    constructor() {
-        console.log('I am alive!')
+    constructor(private logger : LoggerService) {
+		logger.log("")
+//        console.log('I am alive!')
     }
 
     update(contact: Contact) {

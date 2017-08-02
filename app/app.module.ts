@@ -14,12 +14,14 @@ import {ContactsService} from "./contacts.service";
 import {ContactsListComponent} from "./contacts-list.component";
 import {ContactDetailsComponent} from "./contact-details.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { LoggerService } from "./logger.service";
+import { ContactsLoggerService } from "./contactsLogger.service";
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, ReactiveFormsModule ],
   declarations: [ AppComponent, ContactsListComponent, ContactDetailsComponent ],
   bootstrap:    [ AppComponent ],
-  providers: [ContactsService]
+  providers: [ContactsService, [{provide:LoggerService,useClass:ContactsLoggerService}]]
 })
 
 export class AppModule {}
