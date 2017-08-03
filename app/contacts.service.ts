@@ -1,58 +1,69 @@
-
 import {Injectable} from "@angular/core";
 import {Contact} from "./contact.interface";
-import { LoggerService } from "./logger.service";
+import {LoggerService} from "./logger.service";
+import {Http, Response} from "@angular/http";
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/catch'
+import 'rxjs/add/observable/throw'
+import {Observable} from "rxjs/Observable";
+
+const CONTACTS_URL = 'contacts.json';
+
+
 @Injectable()
 
 export class ContactsService {
 
     static _contactId = 1;
 
-    private _CONTACTS:Contact[] = [
-        { id: ContactsService._contactId++, firstName: "Max", lastName: "Smith", email: "max@gmail.com" },
-        { id: ContactsService._contactId++, firstName: "Chris", lastName: "Raches", email: "chris@gmail.com" },
-        { id: ContactsService._contactId++, firstName: "Michael", lastName: "Alloy", email: "michael@gmail.com" },
-        { id: ContactsService._contactId++, firstName: "John", lastName: "Doe", email: "john@gmail.com" },
-        { id: ContactsService._contactId++, firstName: "Jenny", lastName: "Doe", email: "jenny@gmail.com" }
-    ];
 
-
-
-    getAll() {
-        return this._CONTACTS;
+    constructor(private logger: LoggerService, private http: Http) {
+        logger.log()
     }
 
-    constructor(private logger : LoggerService) {
-		logger.log("")
-//        console.log('I am alive!')
+
+    getAll(): Observable<Contact[]> {
+        return this.http.get(CONTACTS_URL)
+            .map((res: Response) => {
+                let data:Contact[] = this.extractData(res)
+                data.map((val) => { ContactsService._contactId = Math.max(val.id, ContactsService._contactId) })
+                ContactsService._contactId++;
+                return data;
+            })
+            .catch(this.handleError)
     }
+
 
     update(contact: Contact) {
-        let ind = this.findIndexById(contact.id);
-        if( ind<0 ) return null;
 
-        this._CONTACTS.splice( ind, 1, contact );
 
-        return contact.id;
     }
 
     add(contact: Contact) {
-        contact.id = ContactsService._contactId++;
 
-        this._CONTACTS.push( contact );
 
-        return contact.id;
     }
 
-    private findById(contactId: number): Contact {
-        return this._CONTACTS.find(row => row.id == contactId )
+    remove(id: number) {
+
+
     }
 
-    private findIndexById(contactId: number) {
-        let contact = this.findById(contactId);
-        if( !contact ) return -1;
-
-        return this._CONTACTS.indexOf(contact);
+    private extractData(res: Response) {
+        if (res.status < 200 || res.status >= 300) {
+            throw new Error('Bad response status: ' + res.status);
+        }
+        let body = res.json();
+        return body || { };
     }
+
+    handleError(error:any) {
+        return Observable.throw('Error!');
+
+    }
+
+
+
+
 
 }
