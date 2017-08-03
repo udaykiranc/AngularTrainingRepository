@@ -66,7 +66,9 @@ export class ContactsService {
     }
 
 
-
+    get(id : number) : Observable<Contact> {
+        return this.http.get(`${CONTACTS_URL}/${id}`).map(res => {return res.json() as Contact});
+    }   
 
 
 }

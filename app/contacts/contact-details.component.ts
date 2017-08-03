@@ -1,7 +1,8 @@
-import {Component, Input, EventEmitter, Output} from "@angular/core";
+import {Component, Input, EventEmitter,OnInit, Output} from "@angular/core";
 import {Contact} from "./contact.interface";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ContactsService} from "./contacts.service";
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'contact-details',
@@ -39,7 +40,7 @@ import {ContactsService} from "./contacts.service";
 })
 
 
-export class ContactDetailsComponent {
+export class ContactDetailsComponent implements OnInit {
     showEdit: boolean;
     contact: Contact;
 
@@ -57,11 +58,18 @@ export class ContactDetailsComponent {
 
     }
 
+    ngOnInit() {
+        this.route.params.subscribe((res)=> {
+            if(res['id'])
+                this.contactService.get(res['id']).subscribe(contact => this.contact = contact);
+        })
+    }
+
     @Output() newContactAdded = new EventEmitter<Contact>();
     @Output() selectedChange = new EventEmitter<Contact>();
 
 
-    constructor(private contactService:ContactsService, private fb:FormBuilder) {
+    constructor(private contactService:ContactsService, private fb:FormBuilder, private route: ActivatedRoute) {
         this.contactForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],

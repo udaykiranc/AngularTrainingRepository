@@ -22,15 +22,15 @@ import {HighlightDirective} from "./highlight.directive";
 import {MyUpperPipe} from "./myUpper.pipe";
 import {HttpModule} from "@angular/http";
 import { AboutComponent } from "./about/about.component";
+import {CanDeactivateGuard} from './can-deactivate-guard';
+import { DialogService } from "./dialog.service";
+import {AppRoutingModule} from "./app-routing.module";
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, ReactiveFormsModule , HttpModule, RouterModule.forRoot([
-  {path:"contacts", component : ContactsComponent},
-  {path:"about", component : AboutComponent}
-  ])],
+  imports:      [ BrowserModule, FormsModule, ReactiveFormsModule , HttpModule, AppRoutingModule],
   declarations: [ AppComponent, AboutComponent, ContactsComponent, ContactsListComponent, ContactDetailsComponent, HighlightDirective, MyUpperPipe ],
   bootstrap:    [ AppComponent ],
-  providers: [ContactsService, [{ provide: LoggerService, useClass: ContactsLoggerService}]]
+  providers: [ContactsService, DialogService, CanDeactivateGuard, [{ provide: LoggerService, useClass: ContactsLoggerService}]]
 })
 
 export class AppModule {}

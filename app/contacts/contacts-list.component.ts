@@ -1,6 +1,7 @@
 import {Component, OnInit, Output, EventEmitter, Input} from "@angular/core";
 import {ContactsService} from "./contacts.service";
 import {Contact} from "./contact.interface";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'contacts-list',
@@ -11,6 +12,7 @@ import {Contact} from "./contact.interface";
                       <a (click)="remove(contact)" class="remove" title="Remove"><span class="glyphicon glyphicon-remove-sign"></span></a>
               
             </li>
+            <router-outlet> </router-outlet>
         </ul>
     `,
 })
@@ -29,7 +31,7 @@ export class ContactsListComponent implements OnInit {
 
     people: Contact[];
 
-    constructor(private contactsService: ContactsService) {
+    constructor(private contactsService: ContactsService, private router : Router) {
 
 
 
@@ -57,6 +59,7 @@ export class ContactsListComponent implements OnInit {
     onSelect(contact: Contact) {
 
         this.selectedChange.emit(contact);
+        this.router.navigate(['contacts', contact.id])
 
     }
 

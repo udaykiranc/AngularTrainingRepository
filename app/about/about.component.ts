@@ -9,5 +9,8 @@ import {Observable} from "rxjs/observable";
     This is demo app about page
     `
 })
-export class AboutComponent() {
+export class AboutComponent{
+    constructor() {
+
+    }
 }
