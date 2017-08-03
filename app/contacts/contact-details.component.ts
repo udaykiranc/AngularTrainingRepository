@@ -57,6 +57,7 @@ export class ContactDetailsComponent {
 
     }
 
+    @Output() newContactAdded = new EventEmitter<Contact>();
     @Output() selectedChange = new EventEmitter<Contact>();
 
 
@@ -82,9 +83,17 @@ export class ContactDetailsComponent {
         dirtyContact.id = this.contact.id;
 
         if(this.contact.id === null)
-            this.contactService.add(dirtyContact) ;
+            this.contactService.add(dirtyContact).subscribe((res) =>{
+                this.contactForm.reset();
+                this.showEdit = false;
+                this.contact = res;
+                this.newContactAdded.emit(this.contact);
+            }) ;
         else
-            this.contactService.update(dirtyContact);
+            this.contactService.update(dirtyContact).subscribe((res) => {
+                this.contact = res;
+                this.selectedChange.emit(this.contact);
+            });
 
         this.contact = dirtyContact;
 

@@ -18,6 +18,10 @@ import {Contact} from "./contact.interface";
 export class ContactsListComponent implements OnInit {
     @Input() selected: Contact;
     @Output() selectedChange = new EventEmitter<Contact>();
+    
+    @Input() set newContactAdded(newContact :Contact) {
+        this.getAll()
+    }
 
 
     selectedContact: Contact;
@@ -37,10 +41,18 @@ export class ContactsListComponent implements OnInit {
             this.selectedChange.emit(this.selected)
         }
 
-        this.contactsService.remove(person.id);
+        this.contactsService.remove(person.id).subscribe((res) => {
+            console.log("removed contact");
+            this.getAll();
+
+        });
     }
 
-
+    getAll() {
+        this.contactsService.getAll().subscribe((peopleFromServer: Contact[]) => {
+            this.people = peopleFromServer;
+        });
+    }
 
     onSelect(contact: Contact) {
 
