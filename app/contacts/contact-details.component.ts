@@ -1,8 +1,8 @@
-import {Component, Input, EventEmitter,OnInit, Output} from "@angular/core";
+import {Component, Input, EventEmitter, Output, OnInit} from "@angular/core";
 import {Contact} from "./contact.interface";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ContactsService} from "./contacts.service";
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'contact-details',
@@ -30,8 +30,8 @@ import {ActivatedRoute} from '@angular/router';
                 
                 
                 <label></label>
-                <input type="submit" class="btn btn-danger" value="{{ !contact.id ? 'Add' : 'Save' }}" [disabled]="contactForm.invalid || contactForm.pristine" />
-                <a href="#" class="text-danger" (click)="onCancel()">Cancel</a>
+                <input type="submit" [disabled]="loading" class="btn btn-danger" value="{{ !contact.id ? 'Add' : 'Save' }}" [disabled]="contactForm.invalid || contactForm.pristine" />
+                <a  class="text-danger" (click)="onCancel()">Cancel</a>
             </form>
             
   
@@ -40,36 +40,19 @@ import {ActivatedRoute} from '@angular/router';
 })
 
 
-export class ContactDetailsComponent implements OnInit {
+export class ContactDetailsComponent implements OnInit{
     showEdit: boolean;
     contact: Contact;
+    loading:boolean;
 
     contactForm:FormGroup;
 
 
-    @Input() set selected(_contact: Contact) {
-        this.contactForm.reset();
-        if (_contact && _contact.id == null) {
-            this.showEdit = true;
-        } else {
-            this.showEdit = false;
-        }
-        this.contact = _contact;
-
-    }
-
-    ngOnInit() {
-        this.route.params.subscribe((res)=> {
-            if(res['id'])
-                this.contactService.get(res['id']).subscribe(contact => this.contact = contact);
-        })
-    }
-
-    @Output() newContactAdded = new EventEmitter<Contact>();
-    @Output() selectedChange = new EventEmitter<Contact>();
 
 
-    constructor(private contactService:ContactsService, private fb:FormBuilder, private route: ActivatedRoute) {
+    constructor(private contactService:ContactsService,
+                private fb:FormBuilder,
+                private route: ActivatedRoute) {
         this.contactForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
@@ -80,35 +63,52 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     onCancel() {
-        this.contact = undefined;
-        this.selectedChange.emit(this.contact);
+        //this.contact = undefined;
+
+    }
+
+
+    ngOnInit() {
+        this.route.params.subscribe((res) => {
+            console.log(res);
+            if(res.id) {
+                this.contactService.get(res.id).subscribe((contact:Contact) => {
+                    this.contact = contact;
+                })
+            }
+
+        })
     }
 
     onSubmit() {
+
         if(! this.contactForm.valid) return;
 
         let dirtyContact: Contact = this.contactForm.value;
         dirtyContact.id = this.contact.id;
 
+
+
+        this.loading = true;
         if(this.contact.id === null)
-            this.contactService.add(dirtyContact).subscribe((res) =>{
+            this.contactService.add(dirtyContact).subscribe((res:Contact) => {
+
                 this.contactForm.reset();
                 this.showEdit = false;
                 this.contact = res;
-                this.newContactAdded.emit(this.contact);
-            }) ;
+                this.loading = false;
+            });
         else
-            this.contactService.update(dirtyContact).subscribe((res) => {
+
+            this.contactService.update(dirtyContact).subscribe((res:Contact) => {
                 this.contact = res;
-                this.selectedChange.emit(this.contact);
+                this.loading = false;
+
             });
 
-        this.contact = dirtyContact;
-
-        this.contactForm.reset();
-        //this.contactChange.emit(this.contact);
-
         this.showEdit = false
+
+
     }
 
 }

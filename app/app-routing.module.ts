@@ -1,25 +1,23 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { CanDeactivateGuard } from "./can-deactivate-guard";
-import { AboutComponent } from "./about/about.component";
-import {ContactsComponent} from "./contacts/contacts.component";
-import {ContactDetailsComponent} from "./contacts/contact-details.component";
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {AboutComponent} from "./about/about.component";
+import {CanDeactivateGuard} from "./can-deactivate.guard";
 
-const routes:Routes =[  
-    {path:"contacts", component : ContactsComponent, children:[
-       {path:":id", component : ContactDetailsComponent, canDeactivate:[CanDeactivateGuard]},
-    ]},
-    {path:"about", component : AboutComponent},
-    {path:"", redirectTo : 'contacts', pathMatch :`full`}
+
+const routes: Routes = [
+    //loadChildren loads a module from the route, making sure route paths don't overlap
+    { path: 'contacts', loadChildren: 'app/contacts/contacts.module#ContactsModule' },
+    { path: 'about', component: AboutComponent },
+    { path: '', redirectTo: '/contacts', pathMatch: 'full' }
 ];
 
 @NgModule({
-    imports :[RouterModule.forRoot(routes, {useHash: true})],
-    declarations:[],
-    providers :[CanDeactivateGuard],
-    exports :[RouterModule]
+    imports: [RouterModule.forRoot(routes, {useHash: true})],
+    declarations: [],
+    providers: [CanDeactivateGuard],
+    exports: [RouterModule]
+
 })
 
 export class AppRoutingModule {
-    
 }
